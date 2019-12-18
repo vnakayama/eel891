@@ -41,3 +41,23 @@ def plot_dist_col(column):
     plt.xlabel(column, fontsize=15)
     plt.legend(['train', 'test'])
     plt.show()
+
+## Adiciona feriados ao dataframe
+from pandas.tseries.holiday import USFederalHolidayCalendar as calendar
+
+dates_range = pd.date_range(start='2015-12-31', end='2017-01-01')
+us_holidays = calendar().holidays(start=dates_range.min(), end=dates_range.max())
+
+def add_holiday(df):
+    df['is_holiday'] = (df['timestamp'].dt.date.astype('datetime64').isin(us_holidays)).astype(np.int8)
+    return df
+
+
+'''
+def hyper_adjustment():
+    # add range
+    # add loop
+    # add train, validation and score
+    # best_param = score.min()
+    return best_param
+'''
