@@ -49,9 +49,20 @@ dates_range = pd.date_range(start='2015-12-31', end='2017-01-01')
 us_holidays = calendar().holidays(start=dates_range.min(), end=dates_range.max())
 
 def add_holiday(df):
-    df['is_holiday'] = (df['timestamp'].dt.date.astype('datetime64').isin(us_holidays)).astype(np.int8)
+    df['holiday'] = (df['timestamp'].dt.date.astype('datetime64').isin(us_holidays)).astype(np.int8)
     return df
 
+def degToCompass(num):
+    val=int((num/22.5))
+    arr=[i for i in range(0,16)]
+    num = arr[(val % 16)]
+    return num
+
+def average_imputation(df, column_name):
+    imputation = df.groupby(['timestamp'])[column_name].mean()
+    df.loc[df[column_name].isnull(), column_name] = df[df[column_name].isnull()][[column_name]].apply(lambda x: imputation[df['timestamp'][x.index]].values)
+    del imputation
+    return df
 
 '''
 def hyper_adjustment():
